@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+	<id>user_password_cache</id>
+	<name>Cache password checks</name>
+	<summary>Don't use this. Ever.</summary>
+	<description>Don't use this. Ever.</description>
+	<version>0.1.0</version>
+	<licence>agpl</licence>
+	<author>Robin Appelman</author>
+	<namespace>UserPasswordCache</namespace>
+	<category>tools</category>
+	<website>https://github.com/icewind1991/user_password_cache</website>
+	<bugs>https://github.com/icewind1991/user_password_cache/issues</bugs>
+	<repository type="git">https://github.com/icewind1991/user_password_cache.git</repository>
+
+	<dependencies>
+		<nextcloud min-version="20" max-version="22"/>
+	</dependencies>
+</info>
