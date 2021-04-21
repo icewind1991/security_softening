@@ -21,7 +21,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\UserPasswordCache;
+namespace OCA\SecuritySoftening;
 
 use OCP\ICache;
 use OCP\User\Backend\ICheckPasswordBackend;

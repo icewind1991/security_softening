@@ -1,18 +1,21 @@
 <?xml version="1.0"?>
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
-	<id>user_password_cache</id>
-	<name>Cache password checks</name>
-	<summary>Don't use this. Ever.</summary>
+	<id>security_softening</id>
+	<name>Security Softening</name>
+	<summary>Don't use this</summary>
 	<description>Don't use this. Ever.</description>
 	<version>0.1.0</version>
 	<licence>agpl</licence>
 	<author>Robin Appelman</author>
-	<namespace>UserPasswordCache</namespace>
+	<namespace>SecuritySoftening</namespace>
+	<types>
+		<authentication/>
+	</types>
 	<category>tools</category>
-	<website>https://github.com/icewind1991/user_password_cache</website>
-	<bugs>https://github.com/icewind1991/user_password_cache/issues</bugs>
-	<repository type="git">https://github.com/icewind1991/user_password_cache.git</repository>
+	<website>https://github.com/icewind1991/security_softening</website>
+	<bugs>https://github.com/icewind1991/security_softening/issues</bugs>
+	<repository type="git">https://github.com/icewind1991/security_softening.git</repository>
 
 	<dependencies>
 		<nextcloud min-version="20" max-version="22"/>

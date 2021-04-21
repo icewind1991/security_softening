@@ -19,14 +19,16 @@
  *
  */
 
-namespace OCA\UserPasswordCache\AppInfo;
+namespace OCA\SecuritySoftening\AppInfo;
 
-use OCA\UserPasswordCache\PasswordCachingBackend;
+use OCA\SecuritySoftening\DummyCsrfManager;
+use OCA\SecuritySoftening\PasswordCachingBackend;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\ICacheFactory;
+use OCP\IRequest;
 use OCP\IUserManager;
 
 class Application extends App implements IBootstrap {
@@ -35,9 +37,12 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
+		// has to be done in `register` instead of `boot` to ensure it's done before auth
+//		$this->applyCaching($this->getContainer()->get(IUserManager::class), $this->getContainer()->get(ICacheFactory::class));
 	}
 
 	public function boot(IBootContext $context): void {
+		$context->injectFn([$this, 'disableCSRFCheck']);
 		$context->injectFn([$this, 'applyCaching']);
 	}
 
@@ -48,6 +53,23 @@ class Application extends App implements IBootstrap {
 				$backend,
 				$cacheFactory->createLocal("user_password_cache")
 			));
+		}
+	}
+
+	public function disableCSRFCheck(IRequest $request) {
+		if ($request->getHeader('CSRF')) {
+			$tokenManagerProp = new \ReflectionProperty($request, 'csrfTokenManager');
+			$tokenManagerProp->setAccessible(true);
+			$csrfManager = $tokenManagerProp->getValue($request);
+			$tokenManagerProp->setValue($request, new DummyCsrfManager($csrfManager));
+
+			$itemsProp = new \ReflectionProperty($request, 'items');
+			$itemsProp->setAccessible(true);
+			$items = $itemsProp->getValue($request);
+			if (!isset($items['server']['HTTP_REQUESTTOKEN'])) {
+				$items['server']['HTTP_REQUESTTOKEN'] = 'dummy';
+				$itemsProp->setValue($request, $items);
+			}
 		}
 	}
 }
