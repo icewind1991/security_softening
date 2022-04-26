@@ -23,7 +23,9 @@ namespace OCA\SecuritySoftening\AppInfo;
 
 use OC\Authentication\Token\PublicKeyTokenProvider;
 use OCA\SecuritySoftening\CachingHasher;
+use OC\User\Manager;
 use OCA\SecuritySoftening\DummyCsrfManager;
+use OCA\SecuritySoftening\LoginListener;
 use OCA\SecuritySoftening\PasswordCachingBackend;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
@@ -33,6 +35,7 @@ use OCP\ICacheFactory;
 use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\Security\IHasher;
+use OCP\User\Events\PostLoginEvent;
 
 class Application extends App implements IBootstrap {
 	public function __construct(array $urlParams = []) {
@@ -46,11 +49,19 @@ class Application extends App implements IBootstrap {
 		$hasher = $container->get(CachingHasher::class);
 		$container->getServer()->registerAlias(IHasher::class, CachingHasher::class);
 		$this->overwriteHasher($container->get(PublicKeyTokenProvider::class), $hasher);
+		$context->registerEventListener(PostLoginEvent::class, LoginListener::class, 999999);
 	}
 
 	public function boot(IBootContext $context): void {
 		$context->injectFn([$this, 'disableCSRFCheck']);
 		$context->injectFn([$this, 'applyCaching']);
+		$context->injectFn([$this, 'cancelLegacyLoginEvent']);
+	}
+
+	public function cancelLegacyLoginEvent(Manager $userManager, IRequest $request) {
+		if ($request->getHeader('no-post-login')) {
+			$userManager->removeListener('\OC\User', 'postLogin');
+		}
 	}
 
 	public function applyCaching(IUserManager $userManager, ICacheFactory $cacheFactory) {
