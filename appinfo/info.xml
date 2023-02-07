@@ -18,6 +18,6 @@
 	<repository type="git">https://github.com/icewind1991/security_softening.git</repository>
 
 	<dependencies>
-		<nextcloud min-version="20" max-version="22"/>
+		<nextcloud min-version="20" max-version="26"/>
 	</dependencies>
 </info>
