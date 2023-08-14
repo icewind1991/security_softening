@@ -38,7 +38,7 @@ class Application extends App implements IBootstrap {
 
 	public function register(IRegistrationContext $context): void {
 		// has to be done in `register` instead of `boot` to ensure it's done before auth
-//		$this->applyCaching($this->getContainer()->get(IUserManager::class), $this->getContainer()->get(ICacheFactory::class));
+		$this->applyCaching($this->getContainer()->get(IUserManager::class), $this->getContainer()->get(ICacheFactory::class));
 	}
 
 	public function boot(IBootContext $context): void {
