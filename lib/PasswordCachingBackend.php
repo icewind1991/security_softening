@@ -43,10 +43,8 @@ class PasswordCachingBackend implements UserInterface,
 	IGetHomeBackend,
 	ICountUsersBackend,
 	IGetRealUIDBackend {
-	/** @var UserInterface */
-	private $inner;
-	/** @var ICache */
-	private $cache;
+	private UserInterface $inner;
+	private ICache $cache;
 
 	public function __construct(UserInterface $inner, ICache $cache) {
 		$this->inner = $inner;

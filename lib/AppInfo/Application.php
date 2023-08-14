@@ -21,6 +21,8 @@
 
 namespace OCA\SecuritySoftening\AppInfo;
 
+use OC\Authentication\Token\PublicKeyTokenProvider;
+use OCA\SecuritySoftening\CachingHasher;
 use OCA\SecuritySoftening\DummyCsrfManager;
 use OCA\SecuritySoftening\PasswordCachingBackend;
 use OCP\AppFramework\App;
@@ -30,6 +32,7 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\ICacheFactory;
 use OCP\IRequest;
 use OCP\IUserManager;
+use OCP\Security\IHasher;
 
 class Application extends App implements IBootstrap {
 	public function __construct(array $urlParams = []) {
@@ -38,7 +41,11 @@ class Application extends App implements IBootstrap {
 
 	public function register(IRegistrationContext $context): void {
 		// has to be done in `register` instead of `boot` to ensure it's done before auth
-		$this->applyCaching($this->getContainer()->get(IUserManager::class), $this->getContainer()->get(ICacheFactory::class));
+		$container = $this->getContainer();
+		$this->applyCaching($container->get(IUserManager::class), $container->get(ICacheFactory::class));
+		$hasher = $container->get(CachingHasher::class);
+		$container->getServer()->registerAlias(IHasher::class, CachingHasher::class);
+		$this->overwriteHasher($container->get(PublicKeyTokenProvider::class), $hasher);
 	}
 
 	public function boot(IBootContext $context): void {
@@ -54,6 +61,12 @@ class Application extends App implements IBootstrap {
 				$cacheFactory->createLocal("user_password_cache")
 			));
 		}
+	}
+
+	public function overwriteHasher(PublicKeyTokenProvider $tokenProvider, IHasher $hasher) {
+		$tokenProviderProp = new \ReflectionProperty($tokenProvider, 'hasher');
+		$tokenProviderProp->setAccessible(true);
+		$tokenProviderProp->setValue($tokenProvider, $hasher);
 	}
 
 	public function disableCSRFCheck(IRequest $request) {
