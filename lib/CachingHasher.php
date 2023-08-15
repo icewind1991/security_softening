@@ -3,11 +3,15 @@
 namespace OCA\SecuritySoftening;
 
 use OC\Security\Hasher;
-use OCP\ICache;
+use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IMemcache;
 
 class CachingHasher extends Hasher {
-	public function __construct(private ICache $cache, IConfig $config) {
+	private IMemcache $cache;
+
+	public function __construct(ICacheFactory $cacheFactory, IConfig $config) {
+		$this->cache = $cacheFactory->createLocal('security_softening');
 		parent::__construct($config);
 	}
 

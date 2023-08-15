@@ -58,7 +58,7 @@ class Application extends App implements IBootstrap {
 			$userManager->removeBackend($backend);
 			$userManager->registerBackend(new PasswordCachingBackend(
 				$backend,
-				$cacheFactory->createLocal("user_password_cache")
+				$cacheFactory
 			));
 		}
 	}

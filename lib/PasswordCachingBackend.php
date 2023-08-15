@@ -23,7 +23,8 @@ declare(strict_types=1);
 
 namespace OCA\SecuritySoftening;
 
-use OCP\ICache;
+use OCP\ICacheFactory;
+use OCP\IMemcache;
 use OCP\User\Backend\ICheckPasswordBackend;
 use OCP\User\Backend\ICountUsersBackend;
 use OCP\User\Backend\ICreateUserBackend;
@@ -44,11 +45,11 @@ class PasswordCachingBackend implements UserInterface,
 	ICountUsersBackend,
 	IGetRealUIDBackend {
 	private UserInterface $inner;
-	private ICache $cache;
+	private IMemcache $cache;
 
-	public function __construct(UserInterface $inner, ICache $cache) {
+	public function __construct(UserInterface $inner, ICacheFactory $cacheFactory) {
+		$this->cache = $cacheFactory->createLocal('security_softening');
 		$this->inner = $inner;
-		$this->cache = $cache;
 	}
 
 	public function implementsActions($actions) {
