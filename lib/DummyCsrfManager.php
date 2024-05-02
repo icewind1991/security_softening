@@ -42,7 +42,7 @@ class DummyCsrfManager extends CsrfTokenManager {
 		return $this->manager->refreshToken();
 	}
 
-	public function removeToken() {
+	public function removeToken(): void {
 		$this->manager->removeToken();
 	}
 
