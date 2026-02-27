@@ -26,14 +26,23 @@ namespace OCA\SecuritySoftening;
 
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\IRequest;
 use OCP\User\Events\PostLoginEvent;
 
 class LoginListener implements IEventListener {
+
+	public function __construct(
+		private IRequest $request
+	) {
+	}
+
 	public function handle(Event $event): void {
 		if (!$event instanceof PostLoginEvent) {
 			return;
 		}
-		$event->stopPropagation();
+		if ($this->request->getHeader('no-post-login')) {
+			$event->stopPropagation();
+		}
 	}
 
 }

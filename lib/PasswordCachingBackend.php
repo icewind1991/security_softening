@@ -31,11 +31,13 @@ use OCP\User\Backend\ICreateUserBackend;
 use OCP\User\Backend\IGetDisplayNameBackend;
 use OCP\User\Backend\IGetHomeBackend;
 use OCP\User\Backend\IGetRealUIDBackend;
+use OCP\User\Backend\IPasswordHashBackend;
 use OCP\User\Backend\ISetDisplayNameBackend;
 use OCP\User\Backend\ISetPasswordBackend;
 use OCP\UserInterface;
 
 class PasswordCachingBackend implements UserInterface,
+
 	ICreateUserBackend,
 	ISetPasswordBackend,
 	ISetDisplayNameBackend,
@@ -43,7 +45,8 @@ class PasswordCachingBackend implements UserInterface,
 	ICheckPasswordBackend,
 	IGetHomeBackend,
 	ICountUsersBackend,
-	IGetRealUIDBackend {
+	IGetRealUIDBackend,
+	IPasswordHashBackend {
 	private UserInterface $inner;
 	private IMemcache $cache;
 
@@ -117,5 +120,19 @@ class PasswordCachingBackend implements UserInterface,
 		return $this->inner->setPassword($uid, $password);
 	}
 
+	public function getPasswordHash(string $userId): ?string {
+		if ($this->inner instanceof IPasswordHashBackend) {
+			return $this->inner->getPasswordHash($userId);
+		} else {
+			return null;
+		}
+	}
 
+	public function setPasswordHash(string $userId, string $passwordHash): bool {
+		if ($this->inner instanceof IPasswordHashBackend) {
+			return $this->inner->setPasswordHash($userId, $passwordHash);
+		} else {
+			return false;
+		}
+	}
 }
