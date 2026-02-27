@@ -117,6 +117,7 @@ class PasswordCachingBackend implements UserInterface,
 	}
 
 	public function setPassword(string $uid, string $password): bool {
+		$this->cache->clear();
 		return $this->inner->setPassword($uid, $password);
 	}
 
@@ -129,6 +130,7 @@ class PasswordCachingBackend implements UserInterface,
 	}
 
 	public function setPasswordHash(string $userId, string $passwordHash): bool {
+		$this->cache->clear();
 		if ($this->inner instanceof IPasswordHashBackend) {
 			return $this->inner->setPasswordHash($userId, $passwordHash);
 		} else {
