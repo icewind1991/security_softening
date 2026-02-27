@@ -85,6 +85,9 @@ class PasswordCachingBackend implements UserInterface,
 	}
 
 	public function checkPassword(string $loginName, string $password) {
+		if (!$this->inner->userExists($loginName)) {
+			return false;
+		}
 		$key = "$loginName::$password";
 		$cached = $this->cache->get($key);
 		if ($cached) {
