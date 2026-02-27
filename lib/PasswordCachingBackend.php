@@ -60,6 +60,7 @@ class PasswordCachingBackend implements UserInterface,
 	}
 
 	public function deleteUser($uid) {
+		$this->cache->clear("$uid::");
 		return $this->inner->deleteUser($uid);
 	}
 
@@ -101,6 +102,7 @@ class PasswordCachingBackend implements UserInterface,
 	}
 
 	public function createUser(string $uid, string $password): bool {
+		$this->cache->clear("$uid::");
 		return $this->inner->createUser($uid, $password);
 	}
 
@@ -117,7 +119,7 @@ class PasswordCachingBackend implements UserInterface,
 	}
 
 	public function setPassword(string $uid, string $password): bool {
-		$this->cache->clear();
+		$this->cache->clear("$uid::");
 		return $this->inner->setPassword($uid, $password);
 	}
 
@@ -130,7 +132,7 @@ class PasswordCachingBackend implements UserInterface,
 	}
 
 	public function setPasswordHash(string $userId, string $passwordHash): bool {
-		$this->cache->clear();
+		$this->cache->clear("$userId::");
 		if ($this->inner instanceof IPasswordHashBackend) {
 			return $this->inner->setPasswordHash($userId, $passwordHash);
 		} else {
